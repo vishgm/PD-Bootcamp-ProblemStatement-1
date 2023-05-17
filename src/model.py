@@ -9,8 +9,8 @@ import pandas as pd
 import pickle
 from sklearn.preprocessing import MinMaxScaler
 
-SCALER_SAVE_PATH = "../models/scaler_model.sav"
-SVC_MODEL_PATH = "../models/svc_model.pkl"
+SCALER_SAVE_PATH = "../models/saved/scaler_model.sav"
+SVC_MODEL_PATH = "../models/saved/svc_model.pkl"
 
 def scale_data(test_data):
     """Scale data using Sklearn MinMaxScaler
@@ -55,4 +55,5 @@ def predict(test_data):
     svc_model = load_model()
         
     oos_predict = svc_model.predict(scaled_data)
+    print("predict", oos_predict)
     return labels[oos_predict[0]]
