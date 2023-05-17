@@ -41,6 +41,14 @@ def load_model():
     return svc_model
 
 def predict(test_data):
+    """Predict on test data - based on saved model
+
+    Args:
+        test_data (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     labels = {0:'No Disease', 1: 'Disease'}
 
     scaled_data = scale_data(test_data)
