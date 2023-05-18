@@ -52,8 +52,11 @@ def predict(test_data):
     labels = {0:'No Disease', 1: 'Disease'}
 
     scaled_data = scale_data(test_data)
+    
     svc_model = load_model()
         
     oos_predict = svc_model.predict(scaled_data)
     print("predict", oos_predict)
+
+    # print("Feature names",svc_model.feature_names)
     return labels[oos_predict[0]]

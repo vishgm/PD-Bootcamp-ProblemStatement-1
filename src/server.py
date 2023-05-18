@@ -33,7 +33,7 @@ def start_server():
     restecg = st.selectbox("Restecg",['Value 0', 'Value 1', 'Value 2'])
     thalach=st.number_input("Thalach",0,300)
     exang=st.radio("Exang", ['Yes', 'No'])
-    oldpeak=st.text_input("Old Peak","Type Here")
+    oldpeak=st.text_input("Old Peak","2.1")
     slope =st.selectbox("Slope",['Value 0', 'Value 1', 'Value 2'])
     ca=st.selectbox("Ca",['Value 0', 'Value 1', 'Value 2'])
     thal=st.selectbox("Thal",['Normal', 'Fixed defect', 'Reversable defect'])
@@ -75,12 +75,17 @@ def start_server():
         pd_cols_dict['age'] = age
         pd_cols_dict['trestbps'] = trestbps
         pd_cols_dict['chol'] = chol
-        pd_cols_dict['fbs'] = fbs
         # pd_cols_dict['restecg'] = restecg
         pd_cols_dict['thalach'] = thalach
         pd_cols_dict['oldpeak'] = oldpeak
 
     
+        if fbs:
+            if fbs > 120:
+                pd_cols_dict['fbs'] = 1
+            else:
+                pd_cols_dict['fbs'] = 0
+                
 
 
         if cp:
@@ -93,13 +98,13 @@ def start_server():
             if cp == "Value 3":
                 pd_cols_dict['cp_3'] = 1
 
-        if thal:
-            if thal == "Value 0":
-                pd_cols_dict['thal_0'] = 1
-            if thal == "Value 1":
-                pd_cols_dict['thal_1'] = 1
-            if thal == "Value 2":
-                pd_cols_dict['thal_2'] = 1
+        # if thal:
+        #     if thal == "Value 0":
+        #         pd_cols_dict['thal_0'] = 1
+        #     if thal == "Value 1":
+        #         pd_cols_dict['thal_1'] = 1
+        #     if thal == "Value 2":
+        #         pd_cols_dict['thal_2'] = 1
         
         if slope:
             if slope == "Value 0":
@@ -125,13 +130,22 @@ def start_server():
             if restecg == "Value 2":
                 pd_cols_dict['restecg_2'] = 1
             
+        if thal:
+            if thal == "Normal":
+                pd_cols_dict['thal_0'] = 1
+            if thal == "Fixed defect":
+                pd_cols_dict['thal_1'] = 1
+            if thal == "Reversable defect":
+                pd_cols_dict['thal_2'] = 1
+            
         
 
         print(pd_cols_dict)
         test_data_df = pd.DataFrame(pd_cols_dict, index=[0])
 
-        st.dataframe(test_data_df)
+        # st.dataframe(test_data_df)
         
+        test_data_df.to_csv("pred_class_zero.csv", index=False)
         print(test_data_df.values.tolist())
 
 
