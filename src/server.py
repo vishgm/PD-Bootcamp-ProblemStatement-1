@@ -143,9 +143,11 @@ def start_server():
         print(pd_cols_dict)
         test_data_df = pd.DataFrame(pd_cols_dict, index=[0])
 
-        # st.dataframe(test_data_df)
+        st.dataframe(test_data_df)
+
         
-        test_data_df.to_csv("pred_class_zero.csv", index=False)
+        
+        test_data_df.to_csv("../data/test/pred_class_zero.csv", index=False)
         print(test_data_df.values.tolist())
 
 
