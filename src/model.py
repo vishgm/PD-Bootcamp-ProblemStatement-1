@@ -31,7 +31,7 @@ SCALER_SAVE_PATH = "../models/saved/scaler_model.sav"
 TRAINED_MODEL_PATH = "../models/saved/trained_model.pkl"
 
 
-def scale_data(df, target_col=None):
+def scale_data(df, target_col=None, test=None):
     """Scale data using Sklearn MinMaxScaler
 
     Args:
@@ -47,6 +47,7 @@ def scale_data(df, target_col=None):
             scaler = pickle.load(scaler_model)
     else:
         scaler = StandardScaler()
+        scaler.fit(df)
 
     # If target col passed as value, drop the column for standardization
     if target_col:
@@ -54,9 +55,12 @@ def scale_data(df, target_col=None):
     else:
         scaled_test_data = scaler.transform(df)
 
-    # Store the scaler model instance
-    with open(SCALER_SAVE_PATH, 'wb') as f:
-        pickle.dump(scaler, f)
+
+    if not test:
+        print("inside not test")
+        # Store the scaler model instance
+        with open(SCALER_SAVE_PATH, 'wb') as f:
+            pickle.dump(scaler, f)
 
 
     return scaled_test_data
@@ -125,13 +129,14 @@ class TrainModel:
         # print(df.head())
 
         # Convert categorical columns to Numeric (using one-hot encoding) 
-        catg_cols = ['thal', 'ca', 'exang', 'cp', 'slope', 'sex']
+        catg_cols = ['thal', 'ca', 'exang', 'cp', 'slope']
 
         cp_df = pd.get_dummies(df['cp'],dtype=int,prefix = 'cp')
         thal_df = pd.get_dummies(df['thal'],dtype=int, prefix='thal')
         slope_df = pd.get_dummies(df['slope'], dtype=int, prefix='slope')
         ca_df = pd.get_dummies(df['ca'], dtype=int,prefix='ca')
         rest_ecg_df = pd.get_dummies(df['restecg'], dtype=int,prefix='restecg')
+        
 
         df = pd.concat([df, cp_df, thal_df, slope_df, ca_df,rest_ecg_df], axis=1)
         df = df.drop(columns=catg_cols)
@@ -152,6 +157,9 @@ class TrainModel:
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1,stratify=y)
 
         self.model.feature_names = X.columns
+
+        print(X_test)
+        pd.concat([X_test, pd.Series(y_test)],axis=1).to_csv("tmp.csv")
 
         return X_train, X_test, y_train, y_test
 
@@ -224,16 +232,18 @@ class TrainModel:
 
         X, y = preprocessed_df.drop(self.target_col, axis=1), preprocessed_df[self.target_col]
         
-        print("Encoding target column")
-        y = self.encode_target_column(y)
+        # print("Encoding target column")
+        # y = self.encode_target_column(y)
 
-        self.model.target_names = self.return_label_map() 
+        # self.model.target_names = self.return_label_map() 
+        self.model.target_names = {0:0, 1:1} 
 
         print("Target cols", self.model.target_names)
 
         print("Splitting data to train, test..")
         X_train, X_test, y_train, y_test = self.split_train_data(X, y)
 
+        print(X.head())
         print("Scaling data")
         X_train = scale_data(X_train)
         X_test = scale_data(X_test)
@@ -295,16 +305,16 @@ class TestModel:
         model = self.load_model()
         labels = model.target_names
 
+        scaled_data = scale_data(pred_df,test=True)
+    
+        pred_df['Predictions'] = model.predict(scaled_data)
+    
         
-        if scaler_model:
-            scaled_data = scale_data(pred_df)
-        
-            pred_df['Predictions'] = model.predict(scaled_data)
-        
-        else:
-            pred_df['Predictions'] = model.predict(pred_df)
+        # if scaler_model:
+        # else:
+        #     pred_df['Predictions'] = model.predict(pred_df)
             
-        print(pred_df)
+        # print(pred_df)
 
         pred_df['Predictions_label'] = pred_df['Predictions'].apply(lambda x: labels[x])
         
@@ -320,7 +330,7 @@ if __name__ == "__main__":
     train_path = "../data/train/heart_cleveland_upload.csv"
     test_path = "../data/test/pred_class_zero.csv"
 
-    print(os.path.isfile(train_path))
+    # print(os.path.isfile(train_path))
 
     svm = SVC()
 
@@ -336,12 +346,4 @@ if __name__ == "__main__":
     
     train_model.start_process()
 
-    test_path = "../data/test/pred_class_zero.csv"
-
     
-    test_model = TestModel(model_path=TRAINED_MODEL_PATH, test_data_path=test_path)
-
-    test_model.load_model()
-
-
-    test_model.predict()
