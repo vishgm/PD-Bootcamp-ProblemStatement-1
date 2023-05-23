@@ -32,7 +32,7 @@ TRAINED_MODEL_PATH = "../models/saved/trained_model.pkl"
 
 
 def scale_data(df, target_col=None, test=None):
-    """Scale data using Sklearn MinMaxScaler
+    """Scale data using Sklearn StdScaler
 
     Args:
         test_data (array/list): List of input values for test
@@ -243,7 +243,7 @@ class TrainModel:
         print("Splitting data to train, test..")
         X_train, X_test, y_train, y_test = self.split_train_data(X, y)
 
-        print(X.head())
+        # print(X.head())
         print("Scaling data")
         X_train = scale_data(X_train)
         X_test = scale_data(X_test)

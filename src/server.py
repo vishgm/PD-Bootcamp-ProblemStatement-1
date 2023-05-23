@@ -8,9 +8,6 @@ from model import TestModel, TRAINED_MODEL_PATH
 
 
 
-def predict(age,sex,cp,trestbps,chol,fbs,restecg,thalach,exang,oldpeak,slope,ca,thal):
-    prediction=model.predict([[age,sex,cp,trestbps,chol,fbs,restecg,thalach,exang,oldpeak,slope,ca,thal]])
-    return prediction
     
 def start_server():
     st.title("Problem Statement 1: Heart Disease Prediction")
