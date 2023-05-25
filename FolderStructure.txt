@@ -1,7 +1,4 @@
-# PD-Bootcamp-ProblemStatement-1
-Group 2 - Problem statetment 1
-
-Problem Statement 1 - Classification of heart disease
+Problemt Statement 1 - Classification of heart disease
 
 data 
 	- train: Training data for models
